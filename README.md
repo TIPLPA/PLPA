@@ -17,4 +17,5 @@ Step into the folder and init the submodule:
 ```git
 cd PLPA
 git submodule init
+git submodule update
 ```
