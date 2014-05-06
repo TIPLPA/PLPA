@@ -15,9 +15,14 @@ namespace Calculator
 
         private void CalculateClick(object sender, RoutedEventArgs e)
         {
-            dynamic input = CodeBox.Text.Eval();
+            dynamic input = SchemeCalculation(CodeBox.Text);
             var data = input.ToString();
             MessageBox.Show(data);
+        }
+
+        private dynamic SchemeCalculation(string inputString)
+        {
+            return inputString.Eval();
         }
     }
 }
