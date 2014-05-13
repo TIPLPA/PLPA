@@ -6,9 +6,22 @@
         xmlns:oxyPlot="clr-namespace:OxyPlot;assembly=OxyPlot"
         Title="Calculator" Height="350" Width="525">
 
-    <Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="GroupBox">
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="100"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5" />
+        </Style>
+    </Window.Resources>
+    <Window.DataContext>       
         <calculator:MainViewModel/>
     </Window.DataContext>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10*"/>
@@ -18,29 +31,77 @@
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        
+
         <TextBox 
+            VerticalContentAlignment="Top"
+            Width="auto"
+            Height="auto"
+            TabIndex="1"
             AcceptsReturn="True"
             AcceptsTab="True"
             Grid.Row="0"
-            Margin="10 5"
             Name="CodeBox"/>
-        
+
         <Button
             Grid.Row="1"
             Content="Calculate"
             Margin="10 5"
             Click="CalculateClick"/>
-        
+
         <Grid 
             Grid.Column="1"
-            Grid.RowSpan="2">
-            
-                <oxy:Plot Model = "{Binding MyModel}"/>
-            
+            Grid.Row="0">
+
+            <!--<oxy:Plot Model = "{Binding MyModel}"/>-->
 
         </Grid>
-        
+
+        <StackPanel
+            Grid.Column = "2"
+            Grid.Row = "0"
+            Margin="5"
+            Orientation="Horizontal">
+
+            <GroupBox
+                Header="Y-axis">
+
+                <StackPanel
+                    Orientation="Horizontal">
+                    
+                    <TextBox
+                        Margin="5"
+                        TabIndex="3"
+                        Text="{Binding Path=YUpper, Mode=TwoWay}"/>
+
+                    <TextBox
+                        Margin="5" 
+                        TabIndex="4"
+                        Text="{Binding Path=YLower, Mode=TwoWay}"/>
+                </StackPanel>
+
+            </GroupBox>
+
+
+            <GroupBox
+                Header="X-axis">
+
+                <StackPanel
+                    Orientation="Horizontal">
+                    <TextBox
+                        Margin="5" 
+                        TabIndex="4"
+                        Text="{Binding Path=XLower, Mode=TwoWay}"/>
+
+                    <TextBox
+                        Margin="5" 
+                        TabIndex="4"
+                        Text="{Binding Path=XUpper, Mode=TwoWay}"/>
+                    
+                </StackPanel>
+
+            </GroupBox>
+        </StackPanel>
+
 
     </Grid>
 </Window>
