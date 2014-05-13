@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using IronScheme;
 
 namespace Calculator
@@ -16,13 +17,26 @@ namespace Calculator
         private void CalculateClick(object sender, RoutedEventArgs e)
         {
             dynamic input = SchemeCalculation(CodeBox.Text);
-            var data = input.ToString();
-            MessageBox.Show(data);
+
+            if (input != null)
+            {
+                var data = input.ToString();
+                MessageBox.Show(data);
+            }
         }
 
         private dynamic SchemeCalculation(string inputString)
         {
-            return inputString.Eval();
+            try
+            {
+                return inputString.Eval();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+            
         }
     }
 }
