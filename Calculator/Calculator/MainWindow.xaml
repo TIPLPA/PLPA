@@ -3,19 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.codeplex.com"
         xmlns:calculator="clr-namespace:Calculator"
-        xmlns:oxyPlot="clr-namespace:OxyPlot;assembly=OxyPlot"
-        Title="Calculator" Height="350" Width="525">
+        Title="Calculator" Height="350" Width="725">
 
     <Window.Resources>
         <Style TargetType="GroupBox">
-            <Setter Property="Width" Value="150"/>
-            <Setter Property="Height" Value="100"/>
+            <Setter Property="Width" Value="135"/>
+            <Setter Property="Height" Value="50"/>
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Width" Value="50"/>
-            <Setter Property="Height" Value="30"/>
+            <Setter Property="Height" Value="25"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5" />
+            <Setter Property="Margin" Value="5 0 5 0" />
         </Style>
     </Window.Resources>
     <Window.DataContext>       
@@ -29,7 +28,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
         <TextBox 
@@ -50,58 +49,66 @@
 
         <Grid 
             Grid.Column="1"
-            Grid.Row="0">
+            Grid.Row="0"
+            Grid.RowSpan="2">
 
-            <!--<oxy:Plot Model = "{Binding MyModel}"/>-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
 
-        </Grid>
+            
 
-        <StackPanel
-            Grid.Column = "2"
-            Grid.Row = "0"
-            Margin="5"
-            Orientation="Horizontal">
+            <StackPanel
+                Grid.Row = "0"
+                Margin="5"
+                Orientation="Horizontal">
 
-            <GroupBox
+                <GroupBox
                 Header="Y-axis">
 
-                <StackPanel
-                    Orientation="Horizontal">
-                    
-                    <TextBox
-                        Margin="5"
-                        TabIndex="3"
-                        Text="{Binding Path=YUpper, Mode=TwoWay}"/>
+                    <StackPanel
+                        Orientation="Horizontal">
 
-                    <TextBox
-                        Margin="5" 
-                        TabIndex="4"
-                        Text="{Binding Path=YLower, Mode=TwoWay}"/>
-                </StackPanel>
+                        <TextBox
+                            TabIndex="3"
+                            Text="{Binding Path=YUpper, Mode=TwoWay}"/>
 
-            </GroupBox>
+                        <TextBox 
+                            TabIndex="4"
+                            Text="{Binding Path=YLower, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                </GroupBox>
 
 
-            <GroupBox
+                <GroupBox
                 Header="X-axis">
 
-                <StackPanel
+                    <StackPanel
                     Orientation="Horizontal">
-                    <TextBox
-                        Margin="5" 
-                        TabIndex="4"
-                        Text="{Binding Path=XLower, Mode=TwoWay}"/>
+                        
+                        <TextBox
+                            TabIndex="4"
+                            Text="{Binding Path=XLower, Mode=TwoWay}"/>
 
-                    <TextBox
-                        Margin="5" 
-                        TabIndex="4"
-                        Text="{Binding Path=XUpper, Mode=TwoWay}"/>
-                    
-                </StackPanel>
+                        <TextBox
+                            TabIndex="4"
+                            Text="{Binding Path=XUpper, Mode=TwoWay}"/>
 
-            </GroupBox>
-        </StackPanel>
+                    </StackPanel>
 
+                </GroupBox>
+            </StackPanel>
 
+            
+                
+            <oxy:Plot 
+                Model="{Binding MyModel}" 
+                Grid.Row="1"/>  
+            
+            
+        </Grid>
     </Grid>
 </Window>
