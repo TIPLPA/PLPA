@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Calculator.Annotations;
@@ -25,22 +24,43 @@ namespace Calculator
             }
         }
 
+
+        private PlotModel _plotModel;
+        public PlotModel PlotModel
+        {
+            get { return _plotModel; }
+            set
+            {
+                _plotModel = value; 
+                OnPropertyChanged("PlotModel");
+            }
+        }
+
         public MainViewModel()
         {
-            this.MyModel = new PlotModel("Example 1");
-            this.MyModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+            _plotModel = new PlotModel();
 
             SetUpModel();
             LoadData();
-
+            
+            _plotModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+            
             _yLower = 0;
             _yUpper = 10;
             _xLower = 0;
             _xUpper = 10;
         }
 
-        public PlotModel MyModel { get; private set; }
         private int _yLower, _yUpper, _xLower, _xUpper;
+
+        private void UpdateAxis(int xl , int xu , int yl , int yu )
+        {
+            var axis = new LinearAxis(AxisPosition.Bottom, xl, xu);
+
+            //_plotModel.Axes.Clear();
+            _plotModel.Axes.Add(axis);
+            _plotModel.Update(true);
+        }
 
         #region Properties
 
@@ -52,6 +72,7 @@ namespace Calculator
                 {
                     _yLower = value;
                     OnPropertyChanged("YLower");
+                    UpdateAxis(XLower, XUpper, YLower, YUpper);
                 }
             }
             get { return _yLower; }
@@ -65,6 +86,7 @@ namespace Calculator
                 {
                     _yUpper = value;
                     OnPropertyChanged("YUpper");
+                    UpdateAxis(XLower, XUpper, YLower, YUpper);
                 }
             }
             get { return _yUpper; }
@@ -78,6 +100,7 @@ namespace Calculator
                 {
                     _xLower = value;
                     OnPropertyChanged("XLower");
+                    UpdateAxis(value, XUpper, YLower, YUpper);
                 }
             }
             get { return _xLower; }
@@ -91,76 +114,93 @@ namespace Calculator
                 {
                     _xUpper = value;
                     OnPropertyChanged("XUpper");
+                    UpdateAxis(XLower, XUpper, YLower, YUpper);
                 }
             }
             get { return _xUpper; }
         }
-        
+
+        #region PropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (handler != null) 
+                handler(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
 
         #endregion
 
         private void SetUpModel()
         {
-            PlotModel.LegendTitle = "Legend";
-            PlotModel.LegendOrientation = LegendOrientation.Horizontal;
-            PlotModel.LegendPlacement = LegendPlacement.Outside;
-            PlotModel.LegendPosition = LegendPosition.TopRight;
-            PlotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
-            PlotModel.LegendBorder = OxyColors.Black;
+            //PlotModel.LegendTitle = "Legend";
+            //_plotModel.LegendOrientation = LegendOrientation.Horizontal;
+            //_plotModel.LegendPlacement = LegendPlacement.Outside;
+            //_plotModel.LegendPosition = LegendPosition.TopRight;
+            //_plotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
+            //_plotModel.LegendBorder = OxyColors.Black;
 
-            var dateAxis = new DateTimeAxis(AxisPosition.Bottom, "Date", "dd/MM/yy HH:mm") { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 80 };
-            PlotModel.Axes.Add(dateAxis);
-            var valueAxis = new LinearAxis(AxisPosition.Left, 0) { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, Title = "Value" };
-            PlotModel.Axes.Add(valueAxis);
+            //var dateAxis = new DateTimeAxis(AxisPosition.Bottom, "Date", "dd/MM/yy HH:mm");
+            //dateAxis.MajorGridlineStyle = LineStyle.Solid;
+            //dateAxis.MinorGridlineStyle = LineStyle.Dot;
+            //dateAxis.IntervalLength = 80;
+            //PlotModel.Axes.Add(dateAxis);
+
+            //var valueAxis = new LinearAxis(AxisPosition.Left, 0);
+            //valueAxis.MajorGridlineStyle = LineStyle.Solid;
+            //valueAxis.MinorGridlineStyle = LineStyle.Dot;
+            //valueAxis.Title = "Value";
+            //PlotModel.Axes.Add(valueAxis);
         }
 
         private void LoadData()
         {
-            List<Measurement> measurements = Data.GetData();
+            //List<Measurement> measurements = Data.GetData();
 
-            var dataPerDetector = measurements.GroupBy(m => m.DetectorId).ToList();
+            //var dataPerDetector = measurements.GroupBy(m => m.DetectorId).ToList();
 
-            foreach (var data in dataPerDetector)
-            {
-                var lineSerie = new LineSeries
-                {
-                    StrokeThickness = 2,
-                    MarkerSize = 3,
-                    MarkerStroke = colors[data.Key],
-                    MarkerType = markerTypes[data.Key],
-                    CanTrackerInterpolatePoints = false,
-                    Title = string.Format("Detector {0}", data.Key),
-                    Smooth = false,
-                };
+            //foreach (var data in dataPerDetector)
+            //{
+            //    var lineSerie = new LineSeries
+            //    {
+            //        StrokeThickness = 2,
+            //        MarkerSize = 3,
+            //        MarkerStroke = colors[data.Key],
+            //        MarkerType = markerTypes[data.Key],
+            //        CanTrackerInterpolatePoints = false,
+            //        Title = string.Format("Detector {0}", data.Key),
+            //        Smooth = false,
+            //    };
 
-                data.ToList().ForEach(d => lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(d.DateTime), d.Value)));
-                PlotModel.Series.Add(lineSerie);
-            }
+            //    data.ToList().ForEach(d => lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(d.DateTime), d.Value)));
+            //    PlotModel.Series.Add(lineSerie);
+            //}
         }
 
         public void UpdateModel()
         {
-            List<Measurement> measurements = Data.GetUpdateData(lastUpdate);
-            var dataPerDetector = measurements.GroupBy(m => m.DetectorId).OrderBy(m => m.Key).ToList();
+            //List<Measurement> measurements = Data.GetUpdateData(lastUpdate);
+            //var dataPerDetector = measurements.GroupBy(m => m.DetectorId).OrderBy(m => m.Key).ToList();
 
-            foreach (var data in dataPerDetector)
-            {
-                var lineSerie = PlotModel.Series[data.Key] as LineSeries;
-                if (lineSerie != null)
-                {
-                    data.ToList()
-                        .ForEach(d => lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(d.DateTime), d.Value)));
-                }
-            }
-            lastUpdate = DateTime.Now;
+            //foreach (var data in dataPerDetector)
+            //{
+            //    var lineSerie = PlotModel.Series[data.Key] as LineSeries;
+            //    if (lineSerie != null)
+            //    {
+            //        data.ToList()
+            //            .ForEach(d => lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(d.DateTime), d.Value)));
+            //    }
+            //}
+            //lastUpdate = DateTime.Now;
+        }
+
+        public void AddFunction()
+        {
+            _plotModel.Series.Add(new FunctionSeries(Math.Sin, 0, 10, 0.1, "cos(x)"));   
         }
     }
 }
