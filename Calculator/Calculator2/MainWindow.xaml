@@ -1,0 +1,103 @@
+﻿<Window x:Class="Calculator2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.codeplex.com"
+        Title="MainWindow" 
+        Height="350" 
+        Width="525">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        
+        <oxy:PlotView 
+            Model="{Binding ThePlotModel}"
+            Grid.Column ="1"
+            Grid.RowSpan="5"/>
+        
+        <StackPanel
+            Grid.Row="1"
+            Orientation="Horizontal">
+            <Label 
+                Content="X min:"
+                Height="25"/>
+            <TextBox
+                TabIndex="1"
+                Width="50"
+                Height="25"
+                Text="{Binding XMin, Mode=TwoWay}"
+                />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="2"
+            Orientation="Horizontal">
+            <Label 
+                Content="X max:"
+                Height="25"/>
+            <TextBox
+                TabIndex="2"
+                Width="50"
+                Height="25"
+                Text="{Binding XMax, Mode=TwoWay}"
+                />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="3"
+            Orientation="Horizontal">
+            <Label 
+                Content="Y min:"
+                Height="25"/>
+            <TextBox
+                TabIndex="3"
+                Width="50"
+                Height="25"
+                Text="{Binding YMin, Mode=TwoWay}"
+                />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="4"
+            Orientation="Horizontal">
+            <Label 
+                Content="Y max:"
+                Height="25"/>
+            <TextBox
+                TabIndex="4"
+                Width="50"
+                Height="25"
+                Text="{Binding YMax, Mode=TwoWay}"
+                />
+        </StackPanel>
+
+
+
+        <TextBox
+            Grid.Column="1"
+            Grid.Row="5"
+            Name="CodeBox"
+            />
+        
+        <Button
+            Click="AddFunction"
+            Content="Add function"/>
+        
+        <Button 
+            Grid.Row="6"
+            Grid.Column="1"
+            Content="Calculate"
+            Click="CalculateClick"/>
+    </Grid>
+</Window>

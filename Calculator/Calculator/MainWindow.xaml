@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.codeplex.com"
         xmlns:calculator="clr-namespace:Calculator"
-        Title="Calculator" Height="350" Width="725">
+        Title="Calculator" 
+        Height="350" 
+        Width="725">
 
     <Window.Resources>
         <Style TargetType="GroupBox">
@@ -17,6 +19,7 @@
             <Setter Property="Margin" Value="5 0 5 0" />
         </Style>
     </Window.Resources>
+    
     <Window.DataContext>       
         <calculator:MainViewModel/>
     </Window.DataContext>
@@ -32,7 +35,7 @@
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBox 
+        <!--<TextBox 
             VerticalContentAlignment="Top"
             Width="auto"
             Height="auto"
@@ -40,7 +43,7 @@
             AcceptsReturn="True"
             AcceptsTab="True"
             Grid.Row="0"
-            Name="CodeBox"/>
+            Name="CodeBox"/>-->
         
         <Button
             Grid.Row="1"
@@ -48,11 +51,11 @@
             Content="Add function"
             Click="AddFunction"/>
 
-        <Button
+        <!--<Button
             Grid.Row="2"
             Content="Calculate"
             Margin="10 5"
-            Click="CalculateClick"/>
+            Click="CalculateClick"/>-->
 
         <Grid 
             Grid.Column="1"
@@ -67,7 +70,7 @@
 
             
 
-            <StackPanel
+            <!--<StackPanel
                 Grid.Row = "0"
                 Margin="5"
                 Orientation="Horizontal">
@@ -79,11 +82,11 @@
                         Orientation="Horizontal">
 
                         <TextBox 
-                            TabIndex="4"
+                            TabIndex="1"
                             Text="{Binding Path=YLower, Mode=TwoWay}"/>
 
                         <TextBox
-                            TabIndex="3"
+                            TabIndex="2"
                             Text="{Binding Path=YUpper, Mode=TwoWay}"/>
                     </StackPanel>
 
@@ -97,7 +100,7 @@
                     Orientation="Horizontal">
                         
                         <TextBox
-                            TabIndex="4"
+                            TabIndex="3"
                             Text="{Binding Path=XLower, Mode=TwoWay}"/>
 
                         <TextBox
@@ -107,12 +110,11 @@
                     </StackPanel>
 
                 </GroupBox>
-            </StackPanel>
+            </StackPanel>-->
                 
             <oxy:Plot 
-                Model="{Binding PlotModel}" 
+                Model="{Binding PlotModel1}" 
                 Margin="5"
-                x:Name="Plot1"
                 Grid.Row="1"/>  
             
         </Grid>

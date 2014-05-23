@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Media;
 using IronScheme;
-using OxyPlot.Wpf;
 
 namespace Calculator
 {
@@ -11,34 +9,26 @@ namespace Calculator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel _viewModel;
+        private readonly MainViewModel _viewModel;
 
         public MainWindow()
         {
             _viewModel = new MainViewModel();
             DataContext = _viewModel;
 
-            CompositionTarget.Rendering += CompositionTargetRendering;
-
             InitializeComponent();
         }
 
-        private void CompositionTargetRendering(object sender, EventArgs e)
-        {
-            _viewModel.UpdateModel();
-            _viewModel.PlotModel.Update(true);
-            _viewModel.PlotModel.InvalidatePlot(true);
-        }
 
         private void CalculateClick(object sender, RoutedEventArgs e)
         {
-            dynamic input = SchemeCalculation(CodeBox.Text);
+            //dynamic input = SchemeCalculation(CodeBox.Text);
 
-            if (input != null)
-            {
-                var data = input.ToString();
-                MessageBox.Show(data);
-            }
+            //if (input != null)
+            //{
+            //    var data = input.ToString();
+            //    MessageBox.Show(data);
+            //}
         }
 
         private dynamic SchemeCalculation(string inputString)
@@ -57,8 +47,7 @@ namespace Calculator
         private void AddFunction(object sender, RoutedEventArgs e)
         {
             _viewModel.AddFunction();
-            _viewModel.PlotModel.InvalidatePlot(true);
-            
+            _viewModel.PlotModel1.InvalidatePlot(true);           
         }
     }
 }

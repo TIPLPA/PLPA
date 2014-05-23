@@ -5,50 +5,40 @@ using Calculator.Annotations;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using OxyPlot.Wpf;
+using LinearAxis = OxyPlot.Axes.LinearAxis;
 
 namespace Calculator
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private bool _isEnabled;
-        public bool IsEnabled
-        {
-            get { return _isEnabled; }
-            set
-            {
-                if (value != _isEnabled)
-                {
-                    _isEnabled = value;
-                    OnPropertyChanged("IsEnabled");
-                }
-            }
-        }
-
-
         private PlotModel _plotModel;
-        public PlotModel PlotModel
+        public PlotModel PlotModel1
         {
             get { return _plotModel; }
             set
             {
-                _plotModel = value; 
-                OnPropertyChanged("PlotModel");
+                _plotModel = value;
+                OnPropertyChanged("PlotModel1");
+                PlotModel1.InvalidatePlot(true);
             }
         }
 
         public MainViewModel()
         {
             _plotModel = new PlotModel();
+            //PlotModel.InvalidatePlot(true);
 
-            SetUpModel();
-            LoadData();
+            //SetUpModel();
+            //LoadData();
+
+            PlotModel1.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+            //PlotModel.Series.Add(new FunctionSeries(Math.Abs, 0, 2, 0.1, "abs(x)"));
             
-            _plotModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
-            
-            _yLower = 0;
-            _yUpper = 10;
-            _xLower = 0;
-            _xUpper = 10;
+            //_yLower = 0;
+            //_yUpper = 10;
+            //_xLower = 0;
+            //_xUpper = 10;
         }
 
         private int _yLower, _yUpper, _xLower, _xUpper;
@@ -57,9 +47,9 @@ namespace Calculator
         {
             var axis = new LinearAxis(AxisPosition.Bottom, xl, xu);
 
-            //_plotModel.Axes.Clear();
-            _plotModel.Axes.Add(axis);
-            _plotModel.Update(true);
+            PlotModel1.Axes.Clear();
+            PlotModel1.Axes.Add(axis);
+            PlotModel1.InvalidatePlot(true);
         }
 
         #region Properties
@@ -200,7 +190,10 @@ namespace Calculator
 
         public void AddFunction()
         {
-            _plotModel.Series.Add(new FunctionSeries(Math.Sin, 0, 10, 0.1, "cos(x)"));   
+            PlotModel1.Series.Add(new FunctionSeries(Math.Sin, 0, 10, 0.1, "sin(x)"));
+            PlotModel1.Series.Add(new FunctionSeries(Math.Abs, 0, 2, 0.1, "abs(x)"));
+            PlotModel1.Axes.Clear();
+            PlotModel1.InvalidatePlot(true);
         }
     }
 }
