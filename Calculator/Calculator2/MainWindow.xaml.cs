@@ -229,22 +229,34 @@ namespace Calculator2
 
         private void LinearClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var con = new Controller {Interface = "(linear {1} {2})"};
+
+            var window = new PopUp(con);
+            window.ShowDialog();
         }
 
         private void LogaClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var con = new Controller { Interface = "(logarithm {1} {2})" };
+
+            var window = new PopUp(con);
+            window.ShowDialog();
         }
 
         private void ExpoClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var con = new Controller { Interface = "(exponential {1} {2})" };
+
+            var window = new PopUp(con);
+            window.ShowDialog();
         }
 
         private void RootClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var con = new Controller { Interface = "(root {1} {2})" };
+
+            var window = new PopUp(con);
+            window.ShowDialog();
         }
         #endregion
 

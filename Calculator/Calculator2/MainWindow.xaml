@@ -188,9 +188,9 @@
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
-            <!--<oxy:PlotView 
+            <oxy:PlotView 
                 Model="{Binding ThePlotModel}"
-                Grid.Row="0"/>-->
+                Grid.Row="0"/>
 
             <TextBox
                 Grid.Row="1"
