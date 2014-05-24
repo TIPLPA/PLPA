@@ -5,99 +5,209 @@
         Title="MainWindow" 
         Height="350" 
         Width="525">
+    
+    <Window.Resources>
+        <Style TargetType="Button" x:Key="func">
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="110"/>
             <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="2*"/>
-        </Grid.RowDefinitions>
         
-        <oxy:PlotView 
-            Model="{Binding ThePlotModel}"
-            Grid.Column ="1"
-            Grid.RowSpan="5"/>
-        
-        <StackPanel
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            
+            <Button
+                Content="Linear"
+                Grid.Row="0"
+                Style="{StaticResource func}"
+                Click="LinearClick"
+                />
+
+            <Button
+                Content="Logarithm"
+                Grid.Row="1"
+                Style="{StaticResource func}"
+                Click="LogaClick"
+                />
+
+            <Button
+                Content="Exponential"
+                Grid.Row="2"
+                Style="{StaticResource func}"
+                Click="ExpoClick"
+                />
+
+            <Button
+                Content="Root"
+                Grid.Row="3"
+                Style="{StaticResource func}"
+                Click="RootClick"
+                />
+
+
+        </Grid>
+
+        <Grid
+            Grid.Column="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            
+            <Label 
+                FontWeight="Bold"
+                Content="Scale adjustment"/>
+
+            <!--<Button
+                Click="AddFunction"
+                Content="Add function"/>-->
+
+            <StackPanel
             Grid.Row="1"
             Orientation="Horizontal">
-            <Label 
+                <Label 
                 Content="X min:"
                 Height="25"/>
-            <TextBox
+                <TextBox
                 TabIndex="1"
                 Width="50"
                 Height="25"
                 Text="{Binding XMin, Mode=TwoWay}"
+                TextChanged="XMinChange"
+                Name="XMinBox"
                 />
-        </StackPanel>
+            </StackPanel>
 
-        <StackPanel
+            <StackPanel
             Grid.Row="2"
             Orientation="Horizontal">
-            <Label 
+                <Label 
                 Content="X max:"
                 Height="25"/>
-            <TextBox
+                <TextBox
                 TabIndex="2"
                 Width="50"
                 Height="25"
                 Text="{Binding XMax, Mode=TwoWay}"
+                TextChanged="XMaxChange"
+                Name="XMaxBox"
                 />
-        </StackPanel>
+            </StackPanel>
 
-        <StackPanel
+            <StackPanel
             Grid.Row="3"
             Orientation="Horizontal">
-            <Label 
+                <Label 
                 Content="Y min:"
                 Height="25"/>
-            <TextBox
+                <TextBox
                 TabIndex="3"
                 Width="50"
                 Height="25"
                 Text="{Binding YMin, Mode=TwoWay}"
+                TextChanged="YMinChange"
+                Name="YMinBox"
                 />
-        </StackPanel>
+            </StackPanel>
 
-        <StackPanel
+            <StackPanel
             Grid.Row="4"
             Orientation="Horizontal">
-            <Label 
+                <Label 
                 Content="Y max:"
                 Height="25"/>
-            <TextBox
+                <TextBox
                 TabIndex="4"
                 Width="50"
                 Height="25"
                 Text="{Binding YMax, Mode=TwoWay}"
+                TextChanged="YMaxChange"
+                Name="YMaxBox"
                 />
-        </StackPanel>
+            </StackPanel>
 
-
-
-        <TextBox
-            Grid.Column="1"
+            <StackPanel
             Grid.Row="5"
-            Name="CodeBox"
-            />
-        
-        <Button
-            Click="AddFunction"
-            Content="Add function"/>
-        
-        <Button 
+            Orientation="Horizontal">
+                <Label 
+                Content="X-Logarithm:"
+                VerticalAlignment="Center"
+                Height="25"/>
+                <CheckBox
+                TabIndex="4"
+                VerticalAlignment="Center"
+                IsChecked="{Binding XLogarithmCheck, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <StackPanel
             Grid.Row="6"
-            Grid.Column="1"
-            Content="Calculate"
-            Click="CalculateClick"/>
+            Orientation="Horizontal">
+                <Label 
+                Content="Y-Logarithm:"
+                VerticalAlignment="Center"
+                Height="25"/>
+                <CheckBox
+                TabIndex="4"
+                VerticalAlignment="Center"
+                IsChecked="{Binding YLogarithmCheck, Mode=TwoWay}"/>
+            </StackPanel>
+
+        </Grid>
+
+        <Grid
+            Grid.Column="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="150"/>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+
+            <!--<oxy:PlotView 
+                Model="{Binding ThePlotModel}"
+                Grid.Row="0"/>-->
+
+            <TextBox
+                Grid.Row="1"
+                AcceptsReturn="True"
+                AcceptsTab="True"
+                Name="CodeBox"
+                />
+
+
+            <Button 
+                Grid.Row="2"
+                Content="Calculate"
+                Margin="10 5"
+                MaxWidth="100"
+                Click="CalculateClick"/>
+
+        </Grid>
+
     </Grid>
 </Window>
