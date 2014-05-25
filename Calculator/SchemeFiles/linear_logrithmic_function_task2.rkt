@@ -93,32 +93,31 @@
 ;[Description] Function for generating a X and Y dataset with Linear X Y distribution '((x1 . y1) (x2 . y2) (...more...))
 ;  <test1 : y = x> (linearFunc 0 10 1 (lambda (x) x) 
 ;  <output> => ((0 . 0) (1 . 1) (2 . 2) (3 . 3) (4 . 4) (5 . 5) (6 . 6) (7 . 7) (8 . 8) (9 . 9) (10 . 10))
-;  <test2> (linearFunc 0 10 1 (lambda (x)(+ (* 2 x) 3)) 
+;  <test2 y = 2x+3> (linearFunc 0 10 1 (lambda (x)(+ (* 2 x) 3))) 
 ;  <output2 : y = 2x + 3> => ((0 . 2) (1 . 4) (2 . 6) (3 . 8) (4 . 10) (5 . 12) (6 . 14) (7 . 16) (8 . 18) (9 . 20) (10 . 22))
 ;  <test for general e.g. calling from java, C#, so give a, b as input parameters> 
 ;                                   (linearFunc 0 10 1 (lambda (x)(+ (* a x) b)) 
-;[param] start : minimum value
-;[param] end   : maximum value
-;[param] scale : scale of the linear
-;[param] func  : A lambda function to genrate Y ( y = (func x)), this will use zip for return (x . y) 
+;[param] xMin      : minimum value
+;[param] xMax      : maximum value
+;[param] intervals : scale of the linear
+;[param] func      : A lambda function to genrate Y ( y = (func x)), this will use zip for return (x . y) 
 (define linearFunc
-  (lambda (start end scale func)
-    (letrec ((helper-linear
+  (lambda (xMin xMax count func)
+    (letrec ( (interval (/ (- xMax xMin) count)) 
+             (helper-linear
               (lambda (x i y)
-                (if (>= i start)           ;; if in the boundary , do the recursion process
+                (if (>= i xMin)           ;; if in the boundary , do the recursion process
                     (helper-linear (cons i x)           ;; recursion for x
-                                   (- i scale)          ;; recursion for i
+                                   (- i interval)          ;; recursion for i
                                    (cons (func i ) y))  ;; recursion for y       
                   (zip x y)          ;; return the dataset values with style (x . y) by using subfunction "zip"
                  )
                 )              
               ))
-      (helper-linear '() end  '())         ;; kick off tail recursion for the function itself  
+      (helper-linear '() xMax  '())         ;; kick off tail recursion for the function itself  
       )
     )
   )
-
-(linearFunc 0 10 1 (lambda (x) x))
 
 ;-----------------[ logarithmic function ] ---------------------------------------------------------------------------------
 ;[Description] Function for generating a X and Y dataset with logarithmic  X distribution '((x1 . y1) (x2 . y2) .....)
@@ -126,24 +125,24 @@
 ;  <output> => ((4.9406564584125e-324 . 4.9406564584125e-324)  ...   (1.0 . 1.0) ...  (4.6415888336127775 . 4.6415888336127775) (10.10))
 ;[param] min      : minimun value
 ;[param] max      : maximum value
-;[param] logscale : scale of logarithm 
+;[param] interval : interval of logarithm 
 ;[param] func2    : A lambda function to genrate Y ( y = (func x))
 (define logarithmicFunc
-  (lambda (min max logscale func)
+  (lambda (min max interval func)
     (letrec ((helper-log
               (lambda (lstX lstY x i acc)                  
                 (if (> x min)                             ;; if in the boundary, do the recursive process
                         (helper-log (cons x lstX)                            ;; recursion for lstX - do I need to check max every time? or it is okay to have in kick off place
                                     (cons (func x ) lstY)                    ;; recursion for lstY
                                     (adapter-logfunc min max acc i)          ;; recursion for x as the logarithm logic calling subfunctions for the math
-                                    (- i 1)                                  ;; recursion for i 
+                                    (- i interval)                                  ;; recursion for i 
                                     acc)
                     
                     (zip lstX lstY)         ;; return the dataset values with style (x . y) by using subfunction "zip"      
                    )
                 )
               ))
-      (helper-log '() '() max (- (nOfPoints-func min max logscale) 2) (nOfPoints-func min max logscale))  ;; kick off tail recursion for the function itself
+      (helper-log '() '() max (- (nOfPoints-func min max interval) 2) (nOfPoints-func min max interval))  ;; kick off tail recursion for the function itself
       )
     )
   )

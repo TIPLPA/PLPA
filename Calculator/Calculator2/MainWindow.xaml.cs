@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -122,12 +123,40 @@ namespace Calculator2
 
         private void CalculateClick(object sender, RoutedEventArgs e)
         {
-            dynamic input = SchemeCalculation(CodeBox.Text);
-
-            if (input != null)
+            try
             {
-                var data = input.ToString();
-                MessageBox.Show(data);
+                var path = Directory.GetCurrentDirectory();
+                var file = File.ReadAllText(path + SchemePath + FileName);
+                string function = string.Format("(linearFunc {0} {1} {2} {3})", XMin, XMax, DataPoints, CodeBox.Text);
+
+                var con = new Controller
+                {
+                    Math = file,
+                    Interface = function,
+                    Pre = "",
+                    Mid = "",
+                    Post = ""
+                };
+
+                var DataString = string.Format(file + function);
+                con.Data = SchemeCalculation(DataString);
+
+                var tmp = new FunctionList()
+                {
+                    Function = AddFunction(con, false),
+                    Name = "Custom",
+                    IsChecked = true,
+                };
+
+                if (tmp.Function == null)
+                    return;
+
+                tmp.ID = _idCounter++;
+                AddFunctionToPlot(tmp);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -241,7 +270,7 @@ namespace Calculator2
 
                 var tmp = new FunctionList()
                 {
-                    Function = AddFunction(con),
+                    Function = AddFunction(con,true),
                     Name = "Linear",
                     IsChecked = true,
                     ID = _idCounter++
@@ -275,7 +304,7 @@ namespace Calculator2
 
             var tmp = new FunctionList()
             {
-                Function = AddFunction(con),
+                Function = AddFunction(con,true),
                 Name = "Logarithmic",
                 IsChecked = true,
                 ID = _idCounter++
@@ -294,7 +323,7 @@ namespace Calculator2
 
             var con = new Controller { Math = file, Interface = function, Title = "Exponential" };
 
-            var serie = AddFunction(con);
+            var serie = AddFunction(con,true);
             con.Title = string.Format("exp({0}*x)^{1}", con.a, con.b);
 
             ThePlotModel.Series.Add(serie);
@@ -309,7 +338,7 @@ namespace Calculator2
 
             var con = new Controller { Math = file, Interface = function, Title = "Root" };
 
-            var serie = AddFunction(con);
+            var serie = AddFunction(con,true);
             con.Title = string.Format("root({0}*x)^(-{1})", con.a, con.b);
 
             ThePlotModel.Series.Add(serie);
@@ -318,10 +347,13 @@ namespace Calculator2
         #endregion
 
         private int _idCounter = 0;
-        private LineSeries AddFunction(Controller con)
+        private LineSeries AddFunction(Controller con, bool custom)
         {
-            var window = new PopUp(con);
-            window.ShowDialog();
+            if (custom)
+            {
+                var window = new PopUp(con);
+                window.ShowDialog();
+            }
 
             try
             {
@@ -330,8 +362,8 @@ namespace Calculator2
 
                 foreach (var datapoint in con.Data)
                 {
-                    double x = datapoint.car;
-                    double y = datapoint.cdr;
+                    double x = (double)datapoint.car;
+                    double y = (double)datapoint.cdr;
                     serie.Points.Add(new DataPoint(x, y));
                 }
                 return serie;
