@@ -24,7 +24,7 @@ namespace Calculator2
 
         public MainWindow()
         {
-            ThePlotModel = new PlotModel("Example 1");
+            ThePlotModel = new PlotModel("Plot");
 
             XMin = 0;
             XMax = 10;
@@ -36,10 +36,10 @@ namespace Calculator2
             XLogarithmCheck = false;
             YLogarithmCheck = false;
 
-            FunctionCollection = new List<FunctionSeries>();
-
             var dummyPlot = new FunctionSeries(Math.Cos, 0, 100, 0.1, "cos(x)");
+
             ThePlotModel.Series.Add(dummyPlot);
+            ObsFunctionList = new ObservableCollection<FunctionList>();
 
             ObsFunctionList.Add(new FunctionList()
             {
@@ -50,6 +50,8 @@ namespace Calculator2
             DataContext = this;
 
             InitializeComponent();
+
+            CheckBoxs.DataContext = ObsFunctionList;
         }
 
         public int XMin { set; get; }
@@ -57,20 +59,15 @@ namespace Calculator2
         public int YMin { get; set; }
         public int YMax { get; set; }
 
-        private void AddFunction(object sender, RoutedEventArgs e)
+        private void AddFunctionToPlot(FunctionList function)
         {
-            var func = new FunctionSeries(Math.Sin, 0, 10, 0.1, "sin(x)");
-            AddFunctionToPlot(func);
-        }
-
-        private void AddFunctionToPlot(FunctionSeries function)
-        {
-            FunctionCollection.Add(function);
+            ObsFunctionList.Add(function);
             ThePlotModel.Series.Clear();
+            ThePlotModel.InvalidatePlot(true);
 
-            foreach (var func in FunctionCollection)
+            foreach (var func in ObsFunctionList)
             {
-                ThePlotModel.Series.Add(func);
+                ThePlotModel.Series.Add(func.Function);
             }
 
             ThePlotModel.InvalidatePlot(true);
@@ -240,19 +237,82 @@ namespace Calculator2
 
         #region Function click
 
+        private const string SchemePath = "/../../../SchemeFiles/";
+
         private void LinearClick(object sender, RoutedEventArgs e)
         {
-
             var path = Directory.GetCurrentDirectory(); 
-            var file = File.ReadAllText(path + "/../../../SchemeFiles/linear_logrithmic function_task2.rkt");
+            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
             string function = string.Format("(linearFunc {0} {1} [0] (lambda (x) x))", XMin, XMax);
 
             var con = new Controller { Math = file, Interface = function};
 
+            var tmp = new FunctionList()
+            {
+                Function = AddFunction(con),
+                Name = "Linear"
+            };
+            //ObsFunctionList.Add(tmp);
+            con.Title = string.Format("{0}*x + {1}", con.a, con.b);
+
+            AddFunctionToPlot(tmp);
+            //ThePlotModel.Series.Add(serie);
+            //ThePlotModel.InvalidatePlot(true);
+        }
+
+        private void LogaClick(object sender, RoutedEventArgs e)
+        {
+            var path = Directory.GetCurrentDirectory();
+            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
+            string function = string.Format("(logarithmicFunc {0} {1} [0] (lambda (x) x))", XMin, XMax);
+
+            var con = new Controller { Math = file, Interface = function};
+
+            var serie = AddFunction(con);
+            con.Title = string.Format("log({0}*x)", con.a);
+
+            ThePlotModel.Series.Add(serie);
+            ThePlotModel.InvalidatePlot(true);
+        }
+
+        private void ExpoClick(object sender, RoutedEventArgs e)
+        {
+            var path = Directory.GetCurrentDirectory();
+            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
+            string function = string.Format("(Exponential {0} {1} [0] (lambda (x) x))", XMin, XMax);
+
+            var con = new Controller { Math = file, Interface = function, Title = "Exponential"};
+
+            var serie = AddFunction(con);
+            con.Title = string.Format("exp({0}*x)^{1}", con.a, con.b);
+
+            ThePlotModel.Series.Add(serie);
+            ThePlotModel.InvalidatePlot(true);
+        }
+
+        private void RootClick(object sender, RoutedEventArgs e)
+        {
+            var path = Directory.GetCurrentDirectory();
+            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
+            string function = string.Format("(Root {0} {1} [0] (lambda (x) x))", XMin, XMax);
+
+            var con = new Controller { Math = file, Interface = function, Title = "Root"};
+
+            var serie = AddFunction(con);
+            con.Title = string.Format("root({0}*x)^(-{1})", con.a, con.b);
+
+            ThePlotModel.Series.Add(serie);
+            ThePlotModel.InvalidatePlot(true);
+        }
+        #endregion
+
+        private LineSeries AddFunction(Controller con)
+        {
             var window = new PopUp(con);
             window.ShowDialog();
 
             var serie = new LineSeries();
+            serie.Title = con.Title;
 
             foreach (var datapoint in con.Data)
             {
@@ -260,42 +320,20 @@ namespace Calculator2
                 double y = datapoint.cdr;
                 serie.Points.Add(new DataPoint(x, y));
             }
-
-            ThePlotModel.Series.Add(serie);
-            ThePlotModel.InvalidatePlot(true);
+            return serie;
         }
 
-        private void LogaClick(object sender, RoutedEventArgs e)
+        private ObservableCollection<FunctionList> _observable; 
+        public ObservableCollection<FunctionList> ObsFunctionList
         {
-            var con = new Controller { Interface = "(logarithm {1} {2})" };
-
-            var window = new PopUp(con);
-            window.ShowDialog();
+            get { return _observable; } 
+            set { _observable = value; }
         }
 
-        private void ExpoClick(object sender, RoutedEventArgs e)
-        {
-            var con = new Controller { Interface = "(exponential {1} {2})" };
-
-            var window = new PopUp(con);
-            window.ShowDialog();
-        }
-
-        private void RootClick(object sender, RoutedEventArgs e)
-        {
-            var con = new Controller { Interface = "(root {1} {2})" };
-
-            var window = new PopUp(con);
-            window.ShowDialog();
-        }
-        #endregion
-
-        public ObservableCollection<FunctionList> ObsFunctionList = new ObservableCollection<FunctionList>();
-
-        public struct FunctionList
+        public class FunctionList
         {
             public string Name { get; set; }
-            public FunctionSeries Function { get; set; }
+            public Series Function { get; set; }
         }
 
     }

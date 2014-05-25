@@ -15,7 +15,9 @@
         </Style>
 
         <DataTemplate x:Key="FunctionL">
-            <TextBlock Text="{Binding Path=Name}"/>
+            <TextBlock 
+                Text="{Binding Path=ObsFunctionList}"
+                Width="Auto"/>
         </DataTemplate>
     </Window.Resources>
 
@@ -69,6 +71,7 @@
             <CheckBox
                 Grid.Row="4"
                 Grid.RowSpan="3"
+                Name="CheckBoxs"
                 ContentTemplate="{StaticResource FunctionL}"/>
 
         </Grid>

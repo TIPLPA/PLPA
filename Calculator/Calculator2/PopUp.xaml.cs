@@ -28,8 +28,8 @@ namespace Calculator2
             //_controller.Interface = _controller.Interface.Replace("[1]", _controller.b.ToString());
             var tmp = string.Format(_controller.Math + _controller.Interface, _controller.a);//, _controller.b);
             _controller.Data = SchemeCalculation(tmp);
-            this.Close();
 
+            this.Close();
         }
 
         private dynamic SchemeCalculation(string inputString)
