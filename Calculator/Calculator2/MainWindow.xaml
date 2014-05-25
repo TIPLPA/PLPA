@@ -219,7 +219,6 @@
                 Name="CodeBox"
                 />
 
-
             <Button 
                 Grid.Row="3"
                 Content="Calculate"
