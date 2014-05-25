@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using IronScheme;
@@ -38,6 +41,12 @@ namespace Calculator2
             var dummyPlot = new FunctionSeries(Math.Cos, 0, 100, 0.1, "cos(x)");
             ThePlotModel.Series.Add(dummyPlot);
 
+            ObsFunctionList.Add(new FunctionList()
+            {
+                Name = "test1", 
+                Function = new  FunctionSeries(Math.Sin,0, 100, 0.1, "sin(x)")
+            });
+
             DataContext = this;
 
             InitializeComponent();
@@ -67,6 +76,7 @@ namespace Calculator2
             ThePlotModel.InvalidatePlot(true);
         }
 
+        #region Logarithm check
         private bool _xlogarithmCheck;
         public bool XLogarithmCheck 
         {
@@ -88,6 +98,8 @@ namespace Calculator2
                 SetScale(2, value);
             }
         }
+
+        #endregion
 
         private void SetupPlot()
         {
@@ -144,7 +156,8 @@ namespace Calculator2
         {
             try
             {
-                return inputString.Eval();
+                dynamic item = inputString.Eval();
+                return item;
             }
             catch (Exception ex)
             {
@@ -229,10 +242,27 @@ namespace Calculator2
 
         private void LinearClick(object sender, RoutedEventArgs e)
         {
-            var con = new Controller {Interface = "(linear {1} {2})"};
+
+            var path = Directory.GetCurrentDirectory(); 
+            var file = File.ReadAllText(path + "/../../../SchemeFiles/linear_logrithmic function_task2.rkt");
+            string function = string.Format("(linearFunc {0} {1} [0] (lambda (x) x))", XMin, XMax);
+
+            var con = new Controller { Math = file, Interface = function};
 
             var window = new PopUp(con);
             window.ShowDialog();
+
+            var serie = new LineSeries();
+
+            foreach (var datapoint in con.Data)
+            {
+                double x = datapoint.car;
+                double y = datapoint.cdr;
+                serie.Points.Add(new DataPoint(x, y));
+            }
+
+            ThePlotModel.Series.Add(serie);
+            ThePlotModel.InvalidatePlot(true);
         }
 
         private void LogaClick(object sender, RoutedEventArgs e)
@@ -260,6 +290,19 @@ namespace Calculator2
         }
         #endregion
 
+        public ObservableCollection<FunctionList> ObsFunctionList = new ObservableCollection<FunctionList>();
+
+        public struct FunctionList
+        {
+            public string Name { get; set; }
+            public FunctionSeries Function { get; set; }
+        }
 
     }
+
+    //public class FunctionList
+    //{
+    //    public string Name { get; set; }
+    //    public FunctionSeries Function { get; set; }
+    //}
 }

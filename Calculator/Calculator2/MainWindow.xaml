@@ -5,7 +5,7 @@
         Title="MainWindow" 
         Height="350" 
         Width="525">
-    
+     
     <Window.Resources>
         <Style TargetType="Button" x:Key="func">
             <Setter Property="Width" Value="70"/>
@@ -13,6 +13,10 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
+
+        <DataTemplate x:Key="FunctionL">
+            <TextBlock Text="{Binding Path=Name}"/>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -24,7 +28,7 @@
         
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
@@ -61,7 +65,11 @@
                 Style="{StaticResource func}"
                 Click="RootClick"
                 />
-
+            
+            <CheckBox
+                Grid.Row="4"
+                Grid.RowSpan="3"
+                ContentTemplate="{StaticResource FunctionL}"/>
 
         </Grid>
 
@@ -183,14 +191,23 @@
             Grid.Column="2">
 
             <Grid.RowDefinitions>
-                <RowDefinition MinHeight="150"/>
+                <RowDefinition Height="150"/>
                 <RowDefinition Height="100"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
             <oxy:PlotView 
                 Model="{Binding ThePlotModel}"
                 Grid.Row="0"/>
+            
+            <GridSplitter 
+                Grid.Row="2" 
+                HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Top"
+                  ShowsPreview="true"
+                  ResizeDirection="Rows"
+                  Height="3"/>
 
             <TextBox
                 Grid.Row="1"
@@ -201,7 +218,7 @@
 
 
             <Button 
-                Grid.Row="2"
+                Grid.Row="3"
                 Content="Calculate"
                 Margin="10 5"
                 MaxWidth="100"
