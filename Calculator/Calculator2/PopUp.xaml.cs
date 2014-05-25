@@ -14,8 +14,11 @@ namespace Calculator2
         public PopUp(Controller controller)
         {
             _controller = controller;
-            _controller.a = 1;
-            _controller.b = 0;
+            AValue = 1;
+            BValue = 1;
+            Pre = controller.Pre;
+            Mid = controller.Mid;
+            Post = controller.Post;
             TypeOfFunction = controller.Title;
 
             DataContext = this;
@@ -23,15 +26,36 @@ namespace Calculator2
             InitializeComponent();
         }
 
+        private double _a, _b;
+
         public string TypeOfFunction { get; set; }
-        public double A { get; set; }
-        public double B { get; set; }
+        public double AValue
+        {
+            get { return _a; }
+            set
+            {
+                _controller.a = value;
+                _a = value;
+            }
+        }
+        public double BValue
+        {
+            get { return _b; }
+            set
+            {
+                _controller.b = value;
+                _b = value;
+            }
+        }
+        public string Pre { get; set; }
+        public string Mid { get; set; }
+        public string Post { get; set; }
 
         private void Calculate(object sender, RoutedEventArgs e)
         {
-            _controller.Interface = _controller.Interface.Replace("[0]", _controller.a.ToString());
-            //_controller.Interface = _controller.Interface.Replace("[1]", _controller.b.ToString());
-            var tmp = string.Format(_controller.Math + _controller.Interface, _controller.a);//, _controller.b);
+            _controller.Interface = _controller.Interface.Replace("[0]", AValue.ToString());
+            _controller.Interface = _controller.Interface.Replace("[1]", BValue.ToString());
+            var tmp = string.Format(_controller.Math + _controller.Interface);
             _controller.Data = SchemeCalculation(tmp);
 
             Close();

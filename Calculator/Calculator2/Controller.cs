@@ -11,5 +11,9 @@ namespace Calculator2
         public FunctionSeries Function { get; set; }
         public string Title { get; set; }
         public dynamic Data { get; set; }
+
+        public string Pre { get; set; }
+        public string Mid { get; set; }
+        public string Post { get; set; }
     }
 }

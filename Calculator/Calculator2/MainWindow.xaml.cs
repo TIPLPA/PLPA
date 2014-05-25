@@ -22,44 +22,14 @@ namespace Calculator2
         public MainWindow()
         {
             ThePlotModel = new PlotModel("Plot");
-
-            XMin = 0;
-            XMax = 10;
-            YMin = 0;
-            YMax = 10;
-
+            ObsFunctionList = new ObservableCollection<FunctionList>();
             SetupPlot();
 
             XLogarithmCheck = false;
             YLogarithmCheck = false;
 
-            //var dummyPlot = new FunctionSeries(Math.Cos, 0, 100, 0.1, "cos(x)");
-
-            //ThePlotModel.Series.Add(dummyPlot);
-            ObsFunctionList = new ObservableCollection<FunctionList>
-            {
-                new FunctionList()
-                {
-                    Name = "test1",
-                    Function = new FunctionSeries(Math.Sin, 0, 100, 0.1, "sin(x)")
-                },
-                new FunctionList()
-                {
-                    Name = "test2",
-                    Function = new FunctionSeries(Math.Sin, 0, 100, 0.1, "sin(x)")
-                },
-                new FunctionList()
-                {
-                    Name = "test3",
-                    Function = new FunctionSeries(Math.Sin, 0, 100, 0.1, "sin(x)")
-                }
-            };
-
             DataContext = this;
-
             InitializeComponent();
-
-            //CheckBoxs.DataContext = ObsFunctionList;
             ItemList.ItemsSource = ObsFunctionList;
         }
 
@@ -105,6 +75,11 @@ namespace Calculator2
 
         private void SetupPlot()
         {
+            XMin = 0;
+            XMax = 10;
+            YMin = 0;
+            YMax = 10;
+
             var xAxis = new LinearAxis();
             xAxis.Minimum = XMin;
             xAxis.Maximum = XMax;
@@ -243,52 +218,77 @@ namespace Calculator2
         #region Function click
 
         private const string SchemePath = "/../../../SchemeFiles/";
+        private const string FileName = "linear_logrithmic_function_task2.rkt";
 
         private void LinearClick(object sender, RoutedEventArgs e)
         {
-            var path = Directory.GetCurrentDirectory();
-            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
-            string function = string.Format("(linearFunc {0} {1} [0] (lambda (x) (+ (* [1] x) [2]))", XMin, XMax);
-
-            var con = new Controller { Math = file, Interface = function };
-
-            var tmp = new FunctionList()
+            try
             {
-                Function = AddFunction(con),
-                Name = "Linear",
-                IsChecked = true,
-                ID = _idCounter++
-            };
+                var path = Directory.GetCurrentDirectory();
+                var file = File.ReadAllText(path + SchemePath + FileName);
+                string function = string.Format("(linearFunc {0} {1} 1 (lambda (x) (+ (* [0] x) [1])))", XMin, XMax);
 
-            con.Title = string.Format("{0}*x + {1}", con.a, con.b);
+                var con = new Controller
+                {
+                    Math = file, 
+                    Interface = function,
+                    Pre = "",
+                    Mid = "*x+ ",
+                    Post = ""
+                };
 
-            AddFunctionToPlot(tmp);
+                var tmp = new FunctionList()
+                {
+                    Function = AddFunction(con),
+                    Name = "Linear",
+                    IsChecked = true,
+                    ID = _idCounter++
+                };
+
+                tmp.Function.Title = string.Format("{0}*x " + (con.b > 1? "+" : "") + " {1}", con.a, con.b);
+
+                AddFunctionToPlot(tmp);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void LogaClick(object sender, RoutedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
-            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
-            string function = string.Format("(linearFunc {0} {1} [0] (lambda (x) (+ (* [a] x) [b]))", XMin, XMax);
+            var file = File.ReadAllText(path + SchemePath + FileName);
+            string function = string.Format("(logarithmicFunc {0} {1} 1 (lambda (x) (+ (expt (log x) [0]) [1])))", XMin, XMax);
 
-            var con = new Controller { Math = file, Interface = function };
-
-            var serie = AddFunction(con);
-
-            if (serie != null)
+            var con = new Controller
             {
-                con.Title = string.Format("log({0}*x)", con.a);
+                Math = file,
+                Interface = function,
+                Pre = "log(",
+                Mid = "^x)*",
+                Post = ""
+            };
 
-                ThePlotModel.Series.Add(serie);
-                ThePlotModel.InvalidatePlot(true);
-            }
+            var tmp = new FunctionList()
+            {
+                Function = AddFunction(con),
+                Name = "Logarithmic",
+                IsChecked = true,
+                ID = _idCounter++
+            };
+
+            tmp.Function.Title = string.Format("log({0}^x) + {1}", con.a, con.b);
+
+            AddFunctionToPlot(tmp);
         }
 
         private void ExpoClick(object sender, RoutedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
-            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
-            string function = string.Format("(Exponential {0} {1} [0] (lambda (x) x))", XMin, XMax);
+            var file = File.ReadAllText(path + SchemePath + FileName);
+            string function = string.Format("(Exponential {0} {1} 1 (lambda (x) (+ ([0] x) [1])", XMin, XMax);
 
             var con = new Controller { Math = file, Interface = function, Title = "Exponential" };
 
@@ -302,7 +302,7 @@ namespace Calculator2
         private void RootClick(object sender, RoutedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
-            var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
+            var file = File.ReadAllText(path + SchemePath + FileName);
             string function = string.Format("(Root {0} {1} [0] (lambda (x) x))", XMin, XMax);
 
             var con = new Controller { Math = file, Interface = function, Title = "Root" };

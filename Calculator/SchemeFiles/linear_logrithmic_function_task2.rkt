@@ -35,7 +35,7 @@
   )
 
 ;------------- "logB" function  ---------------------------
-;[Description] Extedned Log function
+;[Description] Log function - do the log  pure mathematic part
 ;  <test> (logB 100 10) 
 ;  <oupput>   => 2
 ;[Param] x: value that we want the logarithem of
@@ -89,9 +89,14 @@
 ;; ============================================================================================================
 
 ;---------------[ linear function ] -----------------------------------------------------------------------------
+;---------------[ linear function ] -----------------------------------------------------------------------------
 ;[Description] Function for generating a X and Y dataset with Linear X Y distribution '((x1 . y1) (x2 . y2) (...more...))
-;  <test> (linearFunc 0 10 1 (lambda (x) x)) 
+;  <test1 : y = x> (linearFunc 0 10 1 (lambda (x) x) 
 ;  <output> => ((0 . 0) (1 . 1) (2 . 2) (3 . 3) (4 . 4) (5 . 5) (6 . 6) (7 . 7) (8 . 8) (9 . 9) (10 . 10))
+;  <test2> (linearFunc 0 10 1 (lambda (x)(+ (* 2 x) 3)) 
+;  <output2 : y = 2x + 3> => ((0 . 2) (1 . 4) (2 . 6) (3 . 8) (4 . 10) (5 . 12) (6 . 14) (7 . 16) (8 . 18) (9 . 20) (10 . 22))
+;  <test for general e.g. calling from java, C#, so give a, b as input parameters> 
+;                                   (linearFunc 0 10 1 (lambda (x)(+ (* a x) b)) 
 ;[param] start : minimum value
 ;[param] end   : maximum value
 ;[param] scale : scale of the linear
@@ -112,6 +117,8 @@
       )
     )
   )
+
+(linearFunc 0 10 1 (lambda (x) x))
 
 ;-----------------[ logarithmic function ] ---------------------------------------------------------------------------------
 ;[Description] Function for generating a X and Y dataset with logarithmic  X distribution '((x1 . y1) (x2 . y2) .....)
