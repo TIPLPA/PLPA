@@ -37,6 +37,7 @@ namespace Calculator2
         public int XMax { get; set; }
         public int YMin { get; set; }
         public int YMax { get; set; }
+        public int DataPoints { get; set; }
 
         private void AddFunctionToPlot(FunctionList function)
         {
@@ -79,6 +80,7 @@ namespace Calculator2
             XMax = 10;
             YMin = 0;
             YMax = 10;
+            DataPoints = 10;
 
             var xAxis = new LinearAxis();
             xAxis.Minimum = XMin;

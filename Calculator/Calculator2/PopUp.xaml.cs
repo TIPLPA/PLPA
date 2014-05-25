@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using IronScheme;
 
@@ -53,8 +54,8 @@ namespace Calculator2
 
         private void Calculate(object sender, RoutedEventArgs e)
         {
-            _controller.Interface = _controller.Interface.Replace("[0]", AValue.ToString());
-            _controller.Interface = _controller.Interface.Replace("[1]", BValue.ToString());
+            _controller.Interface = _controller.Interface.Replace("[0]", AValue.ToString(CultureInfo.InvariantCulture));
+            _controller.Interface = _controller.Interface.Replace("[1]", BValue.ToString(CultureInfo.InvariantCulture));
             var tmp = string.Format(_controller.Math + _controller.Interface);
             _controller.Data = SchemeCalculation(tmp);
 

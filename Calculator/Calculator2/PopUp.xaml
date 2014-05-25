@@ -32,6 +32,7 @@
             <TextBlock Text="Formular: "/>
             <TextBlock Text="{Binding Pre}"/>
             <TextBox
+                TabIndex="1"
                 Width="Auto"
                 MinWidth="20"
                 Height="20"
@@ -39,6 +40,7 @@
                 />
             <TextBlock Text="{Binding Mid}"/>
             <TextBox
+                TabIndex="2"
                 Width="Auto"
                 MinWidth="20"
                 Height="20"

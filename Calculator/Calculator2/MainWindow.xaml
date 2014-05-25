@@ -5,7 +5,7 @@
         Title="MainWindow" 
         Height="350" 
         Width="525">
-     
+
     <Window.Resources>
         <Style TargetType="Button" x:Key="func">
             <Setter Property="Width" Value="70"/>
@@ -21,7 +21,7 @@
             <ColumnDefinition Width="110"/>
             <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
-        
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
@@ -33,7 +33,7 @@
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
-            
+
             <Button
                 Content="Linear"
                 Grid.Row="0"
@@ -61,7 +61,7 @@
                 Style="{StaticResource func}"
                 Click="RootClick"
                 />
-            
+
             <ItemsControl 
                 Grid.Row="4"
                 Grid.RowSpan="3"
@@ -78,7 +78,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            
+
         </Grid>
 
         <Grid
@@ -94,7 +94,7 @@
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
-            
+
             <Label 
                 FontWeight="Bold"
                 Content="Scale adjustment"/>
@@ -107,16 +107,15 @@
             Grid.Row="1"
             Orientation="Horizontal">
                 <Label 
-                Content="X min:"
-                Height="25"/>
+                    Content="X min:"
+                    Height="25"/>
                 <TextBox
-                TabIndex="1"
-                Width="50"
-                Height="25"
-                Text="{Binding XMin, Mode=TwoWay}"
-                TextChanged="XMinChange"
-                Name="XMinBox"
-                />
+                    TabIndex="1"
+                    Width="50"
+                    Height="25"
+                    Text="{Binding XMin, Mode=TwoWay}"
+                    TextChanged="XMinChange"
+                    Name="XMinBox"/>
             </StackPanel>
 
             <StackPanel
@@ -171,26 +170,40 @@
             Grid.Row="5"
             Orientation="Horizontal">
                 <Label 
-                Content="X-Logarithm:"
-                VerticalAlignment="Center"
-                Height="25"/>
-                <CheckBox
-                TabIndex="4"
-                VerticalAlignment="Center"
-                IsChecked="{Binding XLogarithmCheck, Mode=TwoWay}"/>
+                    Content="Data points"
+                    VerticalAlignment="Center"
+                    Height="25"/>
+                <TextBox
+                    TabIndex="4"
+                    Width="20"
+                    VerticalAlignment="Center"
+                    Text="{Binding DataPoints, Mode=TwoWay}"/>
             </StackPanel>
 
             <StackPanel
-            Grid.Row="6"
-            Orientation="Horizontal">
+                Grid.Row="6"
+                Orientation="Horizontal">
                 <Label 
-                Content="Y-Logarithm:"
-                VerticalAlignment="Center"
-                Height="25"/>
+                    Content="X-Logarithm:"
+                    VerticalAlignment="Center"
+                    Height="25"/>
                 <CheckBox
-                TabIndex="4"
-                VerticalAlignment="Center"
-                IsChecked="{Binding YLogarithmCheck, Mode=TwoWay}"/>
+                    TabIndex="5"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding XLogarithmCheck, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <StackPanel
+                Grid.Row="7"
+                Orientation="Horizontal">
+                <Label 
+                    Content="Y-Logarithm:"
+                    VerticalAlignment="Center"
+                    Height="25"/>
+                <CheckBox
+                    TabIndex="4"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding YLogarithmCheck, Mode=TwoWay}"/>
             </StackPanel>
 
         </Grid>
@@ -208,7 +221,7 @@
             <oxy:PlotView 
                 Model="{Binding ThePlotModel}"
                 Grid.Row="0"/>
-            
+
             <GridSplitter 
                 Grid.Row="2" 
                 HorizontalAlignment="Stretch" 
