@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -18,9 +17,7 @@ namespace Calculator2
     public partial class MainWindow : Window
     {
         public PlotModel ThePlotModel { get; private set; }
-
-        public List<FunctionSeries> FunctionCollection;
-        
+        public ObservableCollection<FunctionList> ObsFunctionList { get; set; }
 
         public MainWindow()
         {
@@ -36,22 +33,34 @@ namespace Calculator2
             XLogarithmCheck = false;
             YLogarithmCheck = false;
 
-            var dummyPlot = new FunctionSeries(Math.Cos, 0, 100, 0.1, "cos(x)");
+            //var dummyPlot = new FunctionSeries(Math.Cos, 0, 100, 0.1, "cos(x)");
 
-            ThePlotModel.Series.Add(dummyPlot);
-            ObsFunctionList = new ObservableCollection<FunctionList>();
-
-            ObsFunctionList.Add(new FunctionList()
+            //ThePlotModel.Series.Add(dummyPlot);
+            ObsFunctionList = new ObservableCollection<FunctionList>
             {
-                Name = "test1", 
-                Function = new  FunctionSeries(Math.Sin,0, 100, 0.1, "sin(x)")
-            });
+                new FunctionList()
+                {
+                    Name = "test1",
+                    Function = new FunctionSeries(Math.Sin, 0, 100, 0.1, "sin(x)")
+                },
+                new FunctionList()
+                {
+                    Name = "test2",
+                    Function = new FunctionSeries(Math.Sin, 0, 100, 0.1, "sin(x)")
+                },
+                new FunctionList()
+                {
+                    Name = "test3",
+                    Function = new FunctionSeries(Math.Sin, 0, 100, 0.1, "sin(x)")
+                }
+            };
 
             DataContext = this;
 
             InitializeComponent();
 
-            CheckBoxs.DataContext = ObsFunctionList;
+            //CheckBoxs.DataContext = ObsFunctionList;
+            ItemList.ItemsSource = ObsFunctionList;
         }
 
         public int XMin { set; get; }
@@ -61,21 +70,17 @@ namespace Calculator2
 
         private void AddFunctionToPlot(FunctionList function)
         {
+            function.IsChecked = true;
             ObsFunctionList.Add(function);
-            ThePlotModel.Series.Clear();
-            ThePlotModel.InvalidatePlot(true);
 
-            foreach (var func in ObsFunctionList)
-            {
-                ThePlotModel.Series.Add(func.Function);
-            }
+            ThePlotModel.Series.Add(function.Function);
 
             ThePlotModel.InvalidatePlot(true);
         }
 
         #region Logarithm check
         private bool _xlogarithmCheck;
-        public bool XLogarithmCheck 
+        public bool XLogarithmCheck
         {
             get { return _xlogarithmCheck; }
             set
@@ -115,23 +120,23 @@ namespace Calculator2
         {
             Axis axis1;
 
-            if(log)
+            if (log)
                 axis1 = new LogarithmicAxis();
             else
                 axis1 = new LinearAxis();
 
-            if(axis == 1)
+            if (axis == 1)
                 axis1.Position = AxisPosition.Bottom;
             else
                 axis1.Position = AxisPosition.Left;
 
-            axis1.MinorStep = ((XMax - XMin)/5)%5; // 5 steps on axis
+            axis1.MinorStep = ((XMax - XMin) / 5) % 5; // 5 steps on axis
             if (axis1.MinorStep < 1)
                 axis1.MinorStep = 1;
             axis1.MinorGridlineStyle = LineStyle.Dot;
 
-            axis1.Minimum = (axis == 2? YMin : XMin);
-            axis1.Maximum = (axis == 2? YMax : XMax);
+            axis1.Minimum = (axis == 2 ? YMin : XMin);
+            axis1.Maximum = (axis == 2 ? YMax : XMax);
 
             ThePlotModel.Axes[axis - 1] = axis1;
 
@@ -241,38 +246,42 @@ namespace Calculator2
 
         private void LinearClick(object sender, RoutedEventArgs e)
         {
-            var path = Directory.GetCurrentDirectory(); 
+            var path = Directory.GetCurrentDirectory();
             var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
-            string function = string.Format("(linearFunc {0} {1} [0] (lambda (x) x))", XMin, XMax);
+            string function = string.Format("(linearFunc {0} {1} [0] (lambda (x) (+ (* [1] x) [2]))", XMin, XMax);
 
-            var con = new Controller { Math = file, Interface = function};
+            var con = new Controller { Math = file, Interface = function };
 
             var tmp = new FunctionList()
             {
                 Function = AddFunction(con),
-                Name = "Linear"
+                Name = "Linear",
+                IsChecked = true,
+                ID = _idCounter++
             };
-            //ObsFunctionList.Add(tmp);
+
             con.Title = string.Format("{0}*x + {1}", con.a, con.b);
 
             AddFunctionToPlot(tmp);
-            //ThePlotModel.Series.Add(serie);
-            //ThePlotModel.InvalidatePlot(true);
         }
 
         private void LogaClick(object sender, RoutedEventArgs e)
         {
             var path = Directory.GetCurrentDirectory();
             var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
-            string function = string.Format("(logarithmicFunc {0} {1} [0] (lambda (x) x))", XMin, XMax);
+            string function = string.Format("(linearFunc {0} {1} [0] (lambda (x) (+ (* [a] x) [b]))", XMin, XMax);
 
-            var con = new Controller { Math = file, Interface = function};
+            var con = new Controller { Math = file, Interface = function };
 
             var serie = AddFunction(con);
-            con.Title = string.Format("log({0}*x)", con.a);
 
-            ThePlotModel.Series.Add(serie);
-            ThePlotModel.InvalidatePlot(true);
+            if (serie != null)
+            {
+                con.Title = string.Format("log({0}*x)", con.a);
+
+                ThePlotModel.Series.Add(serie);
+                ThePlotModel.InvalidatePlot(true);
+            }
         }
 
         private void ExpoClick(object sender, RoutedEventArgs e)
@@ -281,7 +290,7 @@ namespace Calculator2
             var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
             string function = string.Format("(Exponential {0} {1} [0] (lambda (x) x))", XMin, XMax);
 
-            var con = new Controller { Math = file, Interface = function, Title = "Exponential"};
+            var con = new Controller { Math = file, Interface = function, Title = "Exponential" };
 
             var serie = AddFunction(con);
             con.Title = string.Format("exp({0}*x)^{1}", con.a, con.b);
@@ -296,7 +305,7 @@ namespace Calculator2
             var file = File.ReadAllText(path + SchemePath + "linear_logrithmic function_task2.rkt");
             string function = string.Format("(Root {0} {1} [0] (lambda (x) x))", XMin, XMax);
 
-            var con = new Controller { Math = file, Interface = function, Title = "Root"};
+            var con = new Controller { Math = file, Interface = function, Title = "Root" };
 
             var serie = AddFunction(con);
             con.Title = string.Format("root({0}*x)^(-{1})", con.a, con.b);
@@ -306,41 +315,47 @@ namespace Calculator2
         }
         #endregion
 
+        private int _idCounter = 0;
         private LineSeries AddFunction(Controller con)
         {
             var window = new PopUp(con);
             window.ShowDialog();
 
-            var serie = new LineSeries();
-            serie.Title = con.Title;
-
-            foreach (var datapoint in con.Data)
+            try
             {
-                double x = datapoint.car;
-                double y = datapoint.cdr;
-                serie.Points.Add(new DataPoint(x, y));
+                var serie = new LineSeries();
+                serie.Title = con.Title;
+
+                foreach (var datapoint in con.Data)
+                {
+                    double x = datapoint.car;
+                    double y = datapoint.cdr;
+                    serie.Points.Add(new DataPoint(x, y));
+                }
+                return serie;
             }
-            return serie;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
-        private ObservableCollection<FunctionList> _observable; 
-        public ObservableCollection<FunctionList> ObsFunctionList
-        {
-            get { return _observable; } 
-            set { _observable = value; }
-        }
 
         public class FunctionList
         {
             public string Name { get; set; }
+            public int ID { get; set; }
             public Series Function { get; set; }
+            public bool IsChecked { get; set; }
         }
 
+        private void CheckIDClick(object sender, RoutedEventArgs e)
+        {
+            var ID = (int)((CheckBox)sender).Tag;
+            ThePlotModel.Series[ID].IsVisible = ObsFunctionList.First(t => t.ID == ID).IsChecked;
+            ObsFunctionList.First(t => t.ID == ID).IsChecked = !ObsFunctionList.First(t => t.ID == ID).IsChecked;
+            ThePlotModel.InvalidatePlot(true);
+        }
     }
 
-    //public class FunctionList
-    //{
-    //    public string Name { get; set; }
-    //    public FunctionSeries Function { get; set; }
-    //}
 }

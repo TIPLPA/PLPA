@@ -13,12 +13,6 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
-
-        <DataTemplate x:Key="FunctionL">
-            <TextBlock 
-                Text="{Binding Path=ObsFunctionList}"
-                Width="Auto"/>
-        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -68,12 +62,23 @@
                 Click="RootClick"
                 />
             
-            <CheckBox
+            <ItemsControl 
                 Grid.Row="4"
                 Grid.RowSpan="3"
-                Name="CheckBoxs"
-                ContentTemplate="{StaticResource FunctionL}"/>
-
+                Name="ItemList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox 
+                                IsChecked="{Binding IsChecked}" 
+                                Content="{Binding Name}"
+                                Tag="{Binding ID}"
+                                Click="CheckIDClick"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
         </Grid>
 
         <Grid

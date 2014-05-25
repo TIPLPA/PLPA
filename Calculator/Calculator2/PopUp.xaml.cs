@@ -16,11 +16,16 @@ namespace Calculator2
             _controller = controller;
             _controller.a = 1;
             _controller.b = 0;
+            TypeOfFunction = controller.Title;
 
             DataContext = this;
 
             InitializeComponent();
         }
+
+        public string TypeOfFunction { get; set; }
+        public double A { get; set; }
+        public double B { get; set; }
 
         private void Calculate(object sender, RoutedEventArgs e)
         {
@@ -29,7 +34,7 @@ namespace Calculator2
             var tmp = string.Format(_controller.Math + _controller.Interface, _controller.a);//, _controller.b);
             _controller.Data = SchemeCalculation(tmp);
 
-            this.Close();
+            Close();
         }
 
         private dynamic SchemeCalculation(string inputString)
