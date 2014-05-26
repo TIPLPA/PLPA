@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -24,6 +25,7 @@ namespace Calculator2
         {
             ThePlotModel = new PlotModel("Plot");
             ObsFunctionList = new ObservableCollection<FunctionList>();
+
             SetupPlot();
 
             XLogarithmCheck = false;
@@ -32,15 +34,22 @@ namespace Calculator2
             DataContext = this;
             InitializeComponent();
             ItemList.ItemsSource = ObsFunctionList;
+            ThePlotModel.InvalidatePlot(true);
         }
 
         public int XMin { set; get; }
         public int XMax { get; set; }
         public int YMin { get; set; }
         public int YMax { get; set; }
-        public int DataPoints { get; set; }
 
-        private void AddFunctionToPlot(FunctionList function)
+        private int _dataPoint;
+        public int DataPoints 
+        { 
+            get { return _dataPoint; }
+            set { _dataPoint = value < 2 ? 2 : value;}
+        }
+
+        public void AddFunctionToPlot(FunctionList function)
         {
             function.IsChecked = true;
             ObsFunctionList.Add(function);
@@ -121,7 +130,7 @@ namespace Calculator2
             ThePlotModel.InvalidatePlot(true);
         }
 
-        private void CalculateClick(object sender, RoutedEventArgs e)
+        public void CalculateClick(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -129,34 +138,28 @@ namespace Calculator2
                 var file = File.ReadAllText(path + SchemePath + FileName);
                 string function = string.Format("(linearFunc {0} {1} {2} {3})", XMin, XMax, DataPoints, CodeBox.Text);
 
-                var con = new Controller
-                {
-                    Math = file,
-                    Interface = function,
-                    Pre = "",
-                    Mid = "",
-                    Post = ""
-                };
-
                 var DataString = string.Format(file + function);
-                con.Data = SchemeCalculation(DataString);
+                dynamic data = SchemeCalculation(DataString);
 
-                var tmp = new FunctionList()
+                var functionList = new FunctionList()
                 {
-                    Function = AddFunction(con, false),
+                    Function = CreateFunction(data, LineStyle.Solid),
                     Name = "Custom",
+                    SchemeFunction = function,
+                    IsNotDerivative = true,
+                    IsNotIntegral = true,
                     IsChecked = true,
                 };
 
-                if (tmp.Function == null)
+                if (functionList.Function == null)
                     return;
 
-                tmp.ID = _idCounter++;
-                AddFunctionToPlot(tmp);
+                functionList.ID = _idCounter++;
+                AddFunctionToPlot(functionList);           
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Sorry to bother you!");
             }
         }
 
@@ -250,6 +253,7 @@ namespace Calculator2
 
         private const string SchemePath = "/../../../SchemeFiles/";
         private const string FileName = "linear_logrithmic_function_task2.rkt";
+        private const string FileDerivative = "derivative_integral_task3.rkt";
 
         private void LinearClick(object sender, RoutedEventArgs e)
         {
@@ -270,8 +274,10 @@ namespace Calculator2
 
                 var tmp = new FunctionList()
                 {
-                    Function = AddFunction(con,true),
+                    Function = CreateFunction(con, LineStyle.Solid),
                     Name = "Linear",
+                    SchemeFunction = function,
+                    IsNotDerivative = true,
                     IsChecked = true,
                     ID = _idCounter++
                 };
@@ -304,8 +310,10 @@ namespace Calculator2
 
             var tmp = new FunctionList()
             {
-                Function = AddFunction(con,true),
+                Function = CreateFunction(con, LineStyle.Solid),
                 Name = "Logarithmic",
+                SchemeFunction = function,
+                IsNotDerivative = true,
                 IsChecked = true,
                 ID = _idCounter++
             };
@@ -315,52 +323,49 @@ namespace Calculator2
             AddFunctionToPlot(tmp);
         }
 
-        private void ExpoClick(object sender, RoutedEventArgs e)
-        {
-            var path = Directory.GetCurrentDirectory();
-            var file = File.ReadAllText(path + SchemePath + FileName);
-            string function = string.Format("(Exponential {0} {1} 1 (lambda (x) (+ ([0] x) [1])", XMin, XMax);
+        //private void ExpoClick(object sender, RoutedEventArgs e)
+        //{
+        //    var path = Directory.GetCurrentDirectory();
+        //    var file = File.ReadAllText(path + SchemePath + FileName);
+        //    string function = string.Format("(Exponential {0} {1} 1 (lambda (x) (+ ([0] x) [1])", XMin, XMax);
 
-            var con = new Controller { Math = file, Interface = function, Title = "Exponential" };
+        //    var con = new Controller { Math = file, Interface = function, Title = "Exponential" };
 
-            var serie = AddFunction(con,true);
-            con.Title = string.Format("exp({0}*x)^{1}", con.a, con.b);
+        //    var serie = CreateFunction(con,true);
+        //    con.Title = string.Format("exp({0}*x)^{1}", con.a, con.b);
 
-            ThePlotModel.Series.Add(serie);
-            ThePlotModel.InvalidatePlot(true);
-        }
+        //    ThePlotModel.Series.Add(serie);
+        //    ThePlotModel.InvalidatePlot(true);
+        //}
 
-        private void RootClick(object sender, RoutedEventArgs e)
-        {
-            var path = Directory.GetCurrentDirectory();
-            var file = File.ReadAllText(path + SchemePath + FileName);
-            string function = string.Format("(Root {0} {1} [0] (lambda (x) x))", XMin, XMax);
+        //private void RootClick(object sender, RoutedEventArgs e)
+        //{
+        //    var path = Directory.GetCurrentDirectory();
+        //    var file = File.ReadAllText(path + SchemePath + FileName);
+        //    string function = string.Format("(Root {0} {1} [0] (lambda (x) x))", XMin, XMax);
 
-            var con = new Controller { Math = file, Interface = function, Title = "Root" };
+        //    var con = new Controller { Math = file, Interface = function, Title = "Root" };
 
-            var serie = AddFunction(con,true);
-            con.Title = string.Format("root({0}*x)^(-{1})", con.a, con.b);
+        //    var serie = CreateFunction(con,true);
+        //    con.Title = string.Format("root({0}*x)^(-{1})", con.a, con.b);
 
-            ThePlotModel.Series.Add(serie);
-            ThePlotModel.InvalidatePlot(true);
-        }
+        //    ThePlotModel.Series.Add(serie);
+        //    ThePlotModel.InvalidatePlot(true);
+        //}
         #endregion
 
         private int _idCounter = 0;
-        private LineSeries AddFunction(Controller con, bool custom)
+        public LineSeries CreateFunction(dynamic data, LineStyle style, LineSeries line = null)
         {
-            if (custom)
-            {
-                var window = new PopUp(con);
-                window.ShowDialog();
-            }
-
             try
             {
                 var serie = new LineSeries();
-                serie.Title = con.Title;
+                if(line != null)
+                    serie = line;
 
-                foreach (var datapoint in con.Data)
+                serie.LineStyle = style;
+
+                foreach (var datapoint in data)
                 {
                     double x = (double)datapoint.car;
                     double y = (double)datapoint.cdr;
@@ -374,13 +379,17 @@ namespace Calculator2
             }
         }
 
-
         public class FunctionList
         {
             public string Name { get; set; }
             public int ID { get; set; }
             public Series Function { get; set; }
             public bool IsChecked { get; set; }
+
+            public bool ShowDerivative { get; set; }
+            public string SchemeFunction { get; set; }
+            public bool IsNotDerivative { get; set; }
+            public bool IsNotIntegral { get; set; }
         }
 
         private void CheckIDClick(object sender, RoutedEventArgs e)
@@ -389,6 +398,96 @@ namespace Calculator2
             ThePlotModel.Series[ID].IsVisible = ObsFunctionList.First(t => t.ID == ID).IsChecked;
             ObsFunctionList.First(t => t.ID == ID).IsChecked = !ObsFunctionList.First(t => t.ID == ID).IsChecked;
             ThePlotModel.InvalidatePlot(true);
+        }
+
+        private void DerivativeClick(object sender, RoutedEventArgs e)
+        {
+            if( ((CheckBox)sender).IsChecked == false)
+                return;
+            try
+            {
+                var path = Directory.GetCurrentDirectory();
+                var file = File.ReadAllText(path + SchemePath + FileDerivative);
+                string function = string.Format("(derivativeFunc {0} {1} {2} {3})", XMin, XMax, DataPoints, CodeBox.Text);
+
+                var dataString = string.Format(file + function);
+                dynamic data = SchemeCalculation(dataString);
+
+                var functionList = new FunctionList()
+                {
+                    Function = CreateFunction(data, LineStyle.Dot),
+                    Name = "Derivative",
+                    SchemeFunction = function,
+                    IsNotDerivative = false,
+                    IsNotIntegral = true,
+                    IsChecked = true,
+                };
+
+                if (functionList.Function == null)
+                    return;
+
+                functionList.ID = _idCounter++;
+                AddFunctionToPlot(functionList); 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Sorry to bother you!");
+            }
+        }
+
+        private void IntegralClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (((CheckBox)sender).IsChecked == false)
+                    return;
+
+                var path = Directory.GetCurrentDirectory();
+                var file = File.ReadAllText(path + SchemePath + FileName);
+
+                var enable = ObsFunctionList.First(t => t.ID == (int) ((CheckBox) sender).Tag).IsNotDerivative;
+
+                string function = "";
+                
+                if (enable == false)
+                    function = string.Format("(derivativeFunc {0} {1} {2} {3})", XMin, XMax, DataPoints, CodeBox.Text);
+                else
+                    function = string.Format("(linearFunc {0} {1} {2} {3})", XMin, XMax, DataPoints, CodeBox.Text);
+
+                var dataString = string.Format(file + function);
+                dynamic data = SchemeCalculation(dataString);
+
+                LineSeries dataline = CreateFunction(data, LineStyle.Solid, new AreaSeries());
+
+                var serie = new AreaSeries();
+
+                serie.Points.Add(new DataPoint(XMin, 0));
+                foreach (var dataPoint in dataline.Points)
+                {
+                    serie.Points.Add(new DataPoint(dataPoint.X, dataPoint.Y));
+                }
+                serie.Points.Add(new DataPoint(XMax, 0));
+
+                var functionList = new FunctionList()
+                {
+                    Function = serie,
+                    Name = "integral",
+                    SchemeFunction = function,
+                    IsNotDerivative = false,
+                    IsNotIntegral = false,
+                    IsChecked = true,
+                };
+
+                if (functionList.Function == null)
+                    return;
+
+                functionList.ID = _idCounter++;
+                AddFunctionToPlot(functionList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Sorry to bother you!");
+            }
         }
     }
 

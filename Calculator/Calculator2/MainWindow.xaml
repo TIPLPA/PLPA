@@ -17,7 +17,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="130"/>
             <ColumnDefinition Width="110"/>
             <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
@@ -34,7 +34,7 @@
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
 
-            <Button
+            <!--<Button
                 Content="Linear"
                 Grid.Row="0"
                 Style="{StaticResource func}"
@@ -46,9 +46,9 @@
                 Grid.Row="1"
                 Style="{StaticResource func}"
                 Click="LogaClick"
-                />
+                />-->
 
-            <Button
+            <!--<Button
                 Content="Exponential"
                 Grid.Row="2"
                 Style="{StaticResource func}"
@@ -60,20 +60,38 @@
                 Grid.Row="3"
                 Style="{StaticResource func}"
                 Click="RootClick"
-                />
+                />-->
 
             <ItemsControl 
-                Grid.Row="4"
-                Grid.RowSpan="3"
+                Grid.Row="0"
+                Grid.RowSpan="8"
                 Name="ItemList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox 
-                                IsChecked="{Binding IsChecked}" 
-                                Content="{Binding Name}"
-                                Tag="{Binding ID}"
-                                Click="CheckIDClick"/>
+                        <StackPanel Margin="2">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox 
+                                    IsChecked="{Binding IsChecked}" 
+                                    Content="{Binding Name}"
+                                    Tag="{Binding ID}"
+                                    Click="CheckIDClick"/>
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox
+                                    IsChecked="{Binding ShowDerivative}"
+                                    Content="Dev. "
+                                    Name="CheckDev"
+                                    Click="DerivativeClick"
+                                    IsEnabled="{Binding IsNotDerivative}"/>
+                                
+                                <CheckBox
+                                    IsChecked="{Binding ShowIntegral}"
+                                    Content="Int."
+                                    Click="IntegralClick"
+                                    Tag="{Binding ID}"
+                                    IsEnabled="{Binding IsNotIntegral}"/>
+                            </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -235,6 +253,7 @@
                 AcceptsReturn="True"
                 AcceptsTab="True"
                 Name="CodeBox"
+                Margin="5"
                 />
 
             <Button 

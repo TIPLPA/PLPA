@@ -40,6 +40,12 @@
     <Reference Include="IronScheme.Web.Runtime">
       <HintPath>packages\IronScheme.0.9.103684\lib\IronScheme.Web.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="NSubstitute">
+      <HintPath>packages\NSubstitute.1.7.2.0\lib\NET45\NSubstitute.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="OxyPlot">
       <HintPath>packages\OxyPlot.Core.2014.1.308.1\lib\portable-net4+sl4+wp71+win8\OxyPlot.dll</HintPath>
     </Reference>
@@ -68,6 +74,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="TestMainWindow.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
