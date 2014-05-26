@@ -130,39 +130,6 @@ namespace Calculator2
             ThePlotModel.InvalidatePlot(true);
         }
 
-        public void CalculateClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var path = Directory.GetCurrentDirectory();
-                var file = File.ReadAllText(path + SchemePath + FileName);
-                string function = string.Format("(linearFunc {0} {1} {2} {3})", XMin, XMax, DataPoints, CodeBox.Text);
-
-                var DataString = string.Format(file + function);
-                dynamic data = SchemeCalculation(DataString);
-
-                var functionList = new FunctionList()
-                {
-                    Function = CreateFunction(data, LineStyle.Solid),
-                    Name = "Custom",
-                    SchemeFunction = function,
-                    IsNotDerivative = true,
-                    IsNotIntegral = true,
-                    IsChecked = true,
-                };
-
-                if (functionList.Function == null)
-                    return;
-
-                functionList.ID = _idCounter++;
-                AddFunctionToPlot(functionList);           
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Sorry to bother you!");
-            }
-        }
-
         private dynamic SchemeCalculation(string inputString)
         {
             try
@@ -249,110 +216,11 @@ namespace Calculator2
 
         #endregion
 
-        #region Function click
 
         private const string SchemePath = "/../../../SchemeFiles/";
         private const string FileName = "linear_logrithmic_function_task2.rkt";
         private const string FileDerivative = "derivative_integral_task3.rkt";
 
-        private void LinearClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var path = Directory.GetCurrentDirectory();
-                var file = File.ReadAllText(path + SchemePath + FileName);
-                string function = string.Format("(linearFunc {0} {1} 1 (lambda (x) (+ (* [0] x) [1])))", XMin, XMax);
-
-                var con = new Controller
-                {
-                    Math = file, 
-                    Interface = function,
-                    Pre = "",
-                    Mid = "*x+ ",
-                    Post = ""
-                };
-
-                var tmp = new FunctionList()
-                {
-                    Function = CreateFunction(con, LineStyle.Solid),
-                    Name = "Linear",
-                    SchemeFunction = function,
-                    IsNotDerivative = true,
-                    IsChecked = true,
-                    ID = _idCounter++
-                };
-
-                tmp.Function.Title = string.Format("{0}*x " + (con.b > 1? "+" : "") + " {1}", con.a, con.b);
-
-                AddFunctionToPlot(tmp);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-        }
-
-        private void LogaClick(object sender, RoutedEventArgs e)
-        {
-            var path = Directory.GetCurrentDirectory();
-            var file = File.ReadAllText(path + SchemePath + FileName);
-            string function = string.Format("(logarithmicFunc {0} {1} 1 (lambda (x) (+ (expt (log x) [0]) [1])))", XMin, XMax);
-
-            var con = new Controller
-            {
-                Math = file,
-                Interface = function,
-                Pre = "log(",
-                Mid = "^x)*",
-                Post = ""
-            };
-
-            var tmp = new FunctionList()
-            {
-                Function = CreateFunction(con, LineStyle.Solid),
-                Name = "Logarithmic",
-                SchemeFunction = function,
-                IsNotDerivative = true,
-                IsChecked = true,
-                ID = _idCounter++
-            };
-
-            tmp.Function.Title = string.Format("log({0}^x) + {1}", con.a, con.b);
-
-            AddFunctionToPlot(tmp);
-        }
-
-        //private void ExpoClick(object sender, RoutedEventArgs e)
-        //{
-        //    var path = Directory.GetCurrentDirectory();
-        //    var file = File.ReadAllText(path + SchemePath + FileName);
-        //    string function = string.Format("(Exponential {0} {1} 1 (lambda (x) (+ ([0] x) [1])", XMin, XMax);
-
-        //    var con = new Controller { Math = file, Interface = function, Title = "Exponential" };
-
-        //    var serie = CreateFunction(con,true);
-        //    con.Title = string.Format("exp({0}*x)^{1}", con.a, con.b);
-
-        //    ThePlotModel.Series.Add(serie);
-        //    ThePlotModel.InvalidatePlot(true);
-        //}
-
-        //private void RootClick(object sender, RoutedEventArgs e)
-        //{
-        //    var path = Directory.GetCurrentDirectory();
-        //    var file = File.ReadAllText(path + SchemePath + FileName);
-        //    string function = string.Format("(Root {0} {1} [0] (lambda (x) x))", XMin, XMax);
-
-        //    var con = new Controller { Math = file, Interface = function, Title = "Root" };
-
-        //    var serie = CreateFunction(con,true);
-        //    con.Title = string.Format("root({0}*x)^(-{1})", con.a, con.b);
-
-        //    ThePlotModel.Series.Add(serie);
-        //    ThePlotModel.InvalidatePlot(true);
-        //}
-        #endregion
 
         private int _idCounter = 0;
         public LineSeries CreateFunction(dynamic data, LineStyle style, LineSeries line = null)
@@ -390,6 +258,41 @@ namespace Calculator2
             public string SchemeFunction { get; set; }
             public bool IsNotDerivative { get; set; }
             public bool IsNotIntegral { get; set; }
+        }
+
+        #region Clicks
+
+        public void CalculateClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var path = Directory.GetCurrentDirectory();
+                var file = File.ReadAllText(path + SchemePath + FileName);
+                string function = string.Format("(linearFunc {0} {1} {2} {3})", XMin, XMax, DataPoints, CodeBox.Text);
+
+                var DataString = string.Format(file + function);
+                dynamic data = SchemeCalculation(DataString);
+
+                var functionList = new FunctionList()
+                {
+                    Function = CreateFunction(data, LineStyle.Solid),
+                    Name = "Custom",
+                    SchemeFunction = function,
+                    IsNotDerivative = true,
+                    IsNotIntegral = true,
+                    IsChecked = true,
+                };
+
+                if (functionList.Function == null)
+                    return;
+
+                functionList.ID = _idCounter++;
+                AddFunctionToPlot(functionList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Sorry to bother you!");
+            }
         }
 
         private void CheckIDClick(object sender, RoutedEventArgs e)
@@ -489,6 +392,8 @@ namespace Calculator2
                 MessageBox.Show(ex.Message, "Sorry to bother you!");
             }
         }
+
+        #endregion
     }
 
 }
